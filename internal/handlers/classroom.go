@@ -23,3 +23,14 @@ func CreateClassroomHandler(w http.ResponseWriter, r *http.Request) {
     w.WriteHeader(http.StatusCreated)
     json.NewEncoder(w).Encode(classroom)
 }
+
+func GetClassroomsHandler(w http.ResponseWriter, r *http.Request) {
+    classrooms, err := models.GetAllClassrooms()
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(classrooms)
+}

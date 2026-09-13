@@ -17,3 +17,21 @@ func EnrollStudent(name, email string, classroomID int) (Student, error) {
     ).Scan(&s.ID, &s.Name, &s.Email, &s.ClassroomID)
     return s, err
 }
+
+func GetStudentsByClassroomID(classroomID string) ([]Student, error) {
+    rows, err := database.DB.Query("SELECT id, name, email, classroom_id FROM students WHERE classroom_id = $1", classroomID)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var students []Student
+    for rows.Next() {
+        var s Student
+        if err := rows.Scan(&s.ID, &s.Name, &s.Email, &s.ClassroomID); err != nil {
+            return nil, err
+        }
+        students = append(students, s)
+    }
+    return students, nil
+}

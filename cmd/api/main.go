@@ -8,10 +8,10 @@ import (
 )
 
 func main() {
-    // Database ချိတ်ဆက်ခြင်း (Environment variable တွေနဲ့ ချိတ်ရန်)
+    // Database
     database.InitDB("postgres://user:password@localhost/classroom_db?sslmode=disable")
 
-    // Routes များ
+    // Routes
     http.HandleFunc("/api/classrooms", func(w http.ResponseWriter, r *http.Request) {
         if r.Method == http.MethodPost {
             handlers.CreateClassroomHandler(w, r)
@@ -21,6 +21,31 @@ func main() {
     http.HandleFunc("/api/students", func(w http.ResponseWriter, r *http.Request) {
         if r.Method == http.MethodPost {
             handlers.EnrollStudentHandler(w, r)
+        }
+    })
+
+
+// Classroom Routes
+    http.HandleFunc("/api/classrooms", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodGet:
+            handlers.GetClassroomsHandler(w, r)
+        case http.MethodPost:
+            handlers.CreateClassroomHandler(w, r)
+        default:
+            http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+        }
+    })
+
+    // Student Routes
+    http.HandleFunc("/api/students", func(w http.ResponseWriter, r *http.Request) {
+        switch r.Method {
+        case http.MethodGet:
+            handlers.GetStudentsHandler(w, r)
+        case http.MethodPost:
+            handlers.EnrollStudentHandler(w, r)
+        default:
+            http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
         }
     })
 

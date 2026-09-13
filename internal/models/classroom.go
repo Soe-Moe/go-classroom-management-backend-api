@@ -16,3 +16,21 @@ func CreateClassroom(name string, capacity int) (Classroom, error) {
     ).Scan(&c.ID, &c.Name, &c.Capacity)
     return c, err
 }
+
+func GetAllClassrooms() ([]Classroom, error) {
+    rows, err := database.DB.Query("SELECT id, name, capacity FROM classrooms")
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+
+    var classrooms []Classroom
+    for rows.Next() {
+        var c Classroom
+        if err := rows.Scan(&c.ID, &c.Name, &c.Capacity); err != nil {
+            return nil, err
+        }
+        classrooms = append(classrooms, c)
+    }
+    return classrooms, nil
+}
